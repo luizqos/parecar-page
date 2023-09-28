@@ -5,36 +5,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parecar</title>
-
     <link rel="stylesheet" href="assets/css/global.css">
-
 </head>
 
 <body>
-
     <div class="login-form">
         <div class="logo-container">
             <img class="logo" src="/assets/img/logo.png" alt="Parecar">
         </div>
-        <input type="hidden" id="link" name="link" value="">
-
-        <h3>Clique no botão abaixo e confirme sua alteração de senha.</h3>
-        <button type="button" class="log-btn">Confirmar</button>
+        <input type="hidden" id="link" name="link">
+        <h3 id="titulo">Clique no botão abaixo e confirme sua alteração de senha.</h3>
+        <button id="btn-confirmar" type="button" class="log-btn" onclick="aprova()">Confirmar</button>
+        <button id="btn-reload" type="button" class="log-btn-reload">Recarregar Página</button>
     </div>
 
+    <script>
+        function getLink() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const link = urlParams.get('link');
 
-</body>
-<script>
-    function getLink() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('link')) {
-            const valor = urlParams.get('link');
-            document.getElementById('link').value = valor;
-        } else {
-            document.getElementById('link').textContent = 'link';
+            if (!link) {
+                document.getElementById('titulo').innerHTML = 'O link não está disponível.';
+                document.getElementById('btn-confirmar').style.display = 'none';
+            } else {
+                document.getElementById('link').value = link;
+            }
         }
-    }
-    window.onload = getLink;
-</script>
+
+        async function aprova() {
+            const link = document.getElementById('link').value;
+            const url = 'https://api.faciliptv.net.br/api/login/aprova-senha';
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ link }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erro na requisição: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                document.getElementById('titulo').innerHTML = 'Parabéns... Sua senha foi alterada com sucesso!';
+                document.getElementById('btn-confirmar').style.display = 'none';
+                console.log(data);
+            } catch (error) {
+                document.getElementById('titulo').innerHTML = 'Ocorreu um erro, tente novamente';
+                document.getElementById('btn-confirmar').style.display = 'none';
+                document.getElementById('btn-reload').style.display = 'block';
+                document.getElementById('btn-reload').addEventListener('click', () => location.reload());
+                console.error('Erro na requisição:', error);
+            }
+        }
+
+        window.onload = getLink;
+    </script>
+</body>
 
 </html>
