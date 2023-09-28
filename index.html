@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parecar</title>
+
+    <link rel="stylesheet" href="assets/css/global.css">
+
+</head>
+
+<body>
+
+    <div class="login-form">
+        <div class="logo-container">
+            <img class="logo" src="/assets/img/logo.png" alt="Parecar">
+        </div>
+        <input type="hidden" id="link" name="link" value="">
+
+        <h3>Clique no botão abaixo e confirme sua alteração de senha.</h3>
+        <button type="button" class="log-btn">Confirmar</button>
+    </div>
+
+
+</body>
+<script>
+    function getLink() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('link')) {
+            const valor = urlParams.get('link');
+            document.getElementById('link').value = valor;
+        } else {
+            document.getElementById('link').textContent = 'link';
+        }
+    }
+    window.onload = getLink;
+</script>
+
+</html>
